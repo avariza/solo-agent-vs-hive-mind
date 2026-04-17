@@ -1,0 +1,246 @@
+{
+  "solo": {
+    "label": "Solo Agent",
+    "has_implementation": true,
+    "has_tests": true,
+    "lines_impl": 50,
+    "lines_test": 217,
+    "tests_total": 22,
+    "tests_passed": 22,
+    "tests_failed": 0,
+    "coverage_percent": 100,
+    "edge_cases": {
+      "count": 6,
+      "total": 6,
+      "details": [
+        {
+          "name": "invalid_constructor_args",
+          "passed": true,
+          "errors": []
+        },
+        {
+          "name": "invalid_cost",
+          "passed": true,
+          "errors": []
+        },
+        {
+          "name": "multiple_clients_independent",
+          "passed": true,
+          "errors": []
+        },
+        {
+          "name": "sliding_window_expiry",
+          "passed": true,
+          "errors": []
+        },
+        {
+          "name": "weighted_cost_accounting",
+          "passed": true,
+          "errors": []
+        },
+        {
+          "name": "thread_safety",
+          "passed": true,
+          "errors": []
+        }
+      ],
+      "method": "behavioral_probe"
+    },
+    "score": 96.8,
+    "metrics": {
+      "complexity": {
+        "max_cc": 8,
+        "avg_cc": 6.33,
+        "total_blocks": 3,
+        "top_blocks": [
+          {
+            "name": "allow_request",
+            "cc": 8,
+            "line": 21
+          },
+          {
+            "name": "RateLimiter",
+            "cc": 7,
+            "line": 6
+          },
+          {
+            "name": "__init__",
+            "cc": 4,
+            "line": 9
+          }
+        ],
+        "loc": 49,
+        "lloc": 38,
+        "sloc": 35,
+        "comments": 1
+      },
+      "throughput": {
+        "ops_per_sec": 1483189.6,
+        "total_ops": 32000,
+        "threads": 8,
+        "elapsed_sec": 0.022,
+        "p50_latency_us": 0.42,
+        "p99_latency_us": 0.62,
+        "errors_sample": []
+      },
+      "error": null
+    },
+    "usage": {
+      "model": "claude-opus-4-6",
+      "input_tokens": 7,
+      "output_tokens": 3549,
+      "cache_creation_input_tokens": 4641,
+      "cache_read_input_tokens": 144339,
+      "total_cost_usd": 0.19105075,
+      "num_turns": 6,
+      "duration_ms": 51901,
+      "error": null
+    },
+    "conciseness": {
+      "impl_factor": 1,
+      "test_factor": 0.61,
+      "raw": 0.883,
+      "correctness_gate": 1,
+      "points": 8.83,
+      "max_points": 10
+    },
+    "complexity_score": {
+      "max_cc": 8,
+      "avg_cc": 6.33,
+      "points": 3,
+      "max_points": 5
+    },
+    "throughput_score": {
+      "ops_per_sec": 1483189.6,
+      "p99_latency_us": 0.62,
+      "points": 5,
+      "max_points": 5
+    },
+    "duration_seconds": 56
+  },
+  "hive": {
+    "label": "Hive Mind",
+    "has_implementation": true,
+    "has_tests": true,
+    "lines_impl": 59,
+    "lines_test": 224,
+    "tests_total": 19,
+    "tests_passed": 19,
+    "tests_failed": 0,
+    "coverage_percent": 100,
+    "edge_cases": {
+      "count": 6,
+      "total": 6,
+      "details": [
+        {
+          "name": "invalid_constructor_args",
+          "passed": true,
+          "errors": []
+        },
+        {
+          "name": "invalid_cost",
+          "passed": true,
+          "errors": []
+        },
+        {
+          "name": "multiple_clients_independent",
+          "passed": true,
+          "errors": []
+        },
+        {
+          "name": "sliding_window_expiry",
+          "passed": true,
+          "errors": []
+        },
+        {
+          "name": "weighted_cost_accounting",
+          "passed": true,
+          "errors": []
+        },
+        {
+          "name": "thread_safety",
+          "passed": true,
+          "errors": []
+        }
+      ],
+      "method": "behavioral_probe"
+    },
+    "score": 92.1,
+    "metrics": {
+      "complexity": {
+        "max_cc": 8,
+        "avg_cc": 5.25,
+        "total_blocks": 4,
+        "top_blocks": [
+          {
+            "name": "allow_request",
+            "cc": 8,
+            "line": 33
+          },
+          {
+            "name": "RateLimiter",
+            "cc": 6,
+            "line": 6
+          },
+          {
+            "name": "__init__",
+            "cc": 4,
+            "line": 9
+          },
+          {
+            "name": "_get_client_lock",
+            "cc": 3,
+            "line": 24
+          }
+        ],
+        "loc": 58,
+        "lloc": 41,
+        "sloc": 38,
+        "comments": 7
+      },
+      "throughput": {
+        "ops_per_sec": 72051.6,
+        "total_ops": 32000,
+        "threads": 8,
+        "elapsed_sec": 0.444,
+        "p50_latency_us": 13.04,
+        "p99_latency_us": 4358.12,
+        "errors_sample": []
+      },
+      "error": null
+    },
+    "usage": {
+      "model": "claude-opus-4-6",
+      "input_tokens": 7,
+      "output_tokens": 3906,
+      "cache_creation_input_tokens": 5147,
+      "cache_read_input_tokens": 144405,
+      "total_cost_usd": 0.20316625,
+      "num_turns": 6,
+      "duration_ms": 57909,
+      "error": null
+    },
+    "conciseness": {
+      "impl_factor": 0.94,
+      "test_factor": 0.587,
+      "raw": 0.834,
+      "correctness_gate": 1,
+      "points": 8.34,
+      "max_points": 10
+    },
+    "complexity_score": {
+      "max_cc": 8,
+      "avg_cc": 5.25,
+      "points": 3,
+      "max_points": 5
+    },
+    "throughput_score": {
+      "ops_per_sec": 72051.6,
+      "p99_latency_us": 4358.12,
+      "points": 0.79,
+      "max_points": 5
+    },
+    "duration_seconds": 61
+  },
+  "timestamp": "2026-04-17T04:28:23.451Z"
+}

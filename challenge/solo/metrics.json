@@ -1,0 +1,38 @@
+{
+  "complexity": {
+    "max_cc": 8,
+    "avg_cc": 6.33,
+    "total_blocks": 3,
+    "top_blocks": [
+      {
+        "name": "allow_request",
+        "cc": 8,
+        "line": 21
+      },
+      {
+        "name": "RateLimiter",
+        "cc": 7,
+        "line": 6
+      },
+      {
+        "name": "__init__",
+        "cc": 4,
+        "line": 9
+      }
+    ],
+    "loc": 49,
+    "lloc": 38,
+    "sloc": 35,
+    "comments": 1
+  },
+  "throughput": {
+    "ops_per_sec": 1483189.6,
+    "total_ops": 32000,
+    "threads": 8,
+    "elapsed_sec": 0.022,
+    "p50_latency_us": 0.42,
+    "p99_latency_us": 0.62,
+    "errors_sample": []
+  },
+  "error": null
+}

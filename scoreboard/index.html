@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solo Agent vs Hive Mind</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --border: #1e1e2e;
+      --text: #e0e0e8;
+      --dim: #6b6b80;
+      --solo-accent: #3b82f6;
+      --solo-glow: rgba(59, 130, 246, 0.15);
+      --hive-accent: #f59e0b;
+      --hive-glow: rgba(245, 158, 11, 0.15);
+      --green: #22c55e;
+      --red: #ef4444;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .header {
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+    }
+
+    .header h1 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--solo-accent), #a78bfa, var(--hive-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header .subtitle {
+      color: var(--dim);
+      font-size: 0.95rem;
+      margin-top: 0.3rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .arena {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      padding: 0 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .side {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .side::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+
+    .side.solo::before { background: linear-gradient(90deg, var(--solo-accent), transparent); }
+    .side.hive::before { background: linear-gradient(90deg, var(--hive-accent), transparent); }
+    .side.solo { box-shadow: 0 0 30px var(--solo-glow); }
+    .side.hive { box-shadow: 0 0 30px var(--hive-glow); }
+
+    .side-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .side-icon { font-size: 2rem; line-height: 1; }
+
+    .side-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .solo .side-title { color: var(--solo-accent); }
+    .hive .side-title { color: var(--hive-accent); }
+
+    .status-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      margin-left: auto;
+    }
+
+    .status-waiting { background: #1e1e2e; color: var(--dim); }
+    .status-running, .status-coding { background: rgba(59, 130, 246, 0.15); color: var(--solo-accent); }
+    .status-testing { background: rgba(245, 158, 11, 0.15); color: var(--hive-accent); }
+    .status-done { background: rgba(34, 197, 94, 0.15); color: var(--green); }
+
+    .top-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .metric {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem;
+    }
+
+    .metric-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--dim);
+      margin-bottom: 0.3rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .metric-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.6rem;
+      font-weight: 800;
+    }
+
+    .metric-value.highlight-green { color: var(--green); }
+    .metric-value.highlight-red { color: var(--red); }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-top: 0.75rem;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+
+    .solo .progress-bar-fill { background: var(--solo-accent); }
+    .hive .progress-bar-fill { background: var(--hive-accent); }
+
+    .files-list {
+      margin-top: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--dim);
+    }
+
+    .files-list .file {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.25rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .files-list .file-name { color: var(--text); }
+
+    /* Detailed metrics table */
+    .details-table {
+      width: 100%;
+      margin-top: 1rem;
+      border-collapse: collapse;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+    }
+
+    .details-table tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .details-table td {
+      padding: 0.4rem 0.5rem;
+    }
+
+    .details-table td:first-child {
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.7rem;
+      width: 55%;
+    }
+
+    .details-table td:last-child {
+      text-align: right;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .details-table .val-yes { color: var(--green); }
+    .details-table .val-no { color: var(--red); }
+
+    .score-section {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 2px solid var(--border);
+      text-align: center;
+    }
+
+    .score-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .score-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 3rem;
+      font-weight: 800;
+    }
+
+    .solo .score-value { color: var(--solo-accent); }
+    .hive .score-value { color: var(--hive-accent); }
+
+    /* Log panels */
+    .logs-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      padding: 0 2rem 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .log-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .log-panel.solo { box-shadow: 0 0 20px var(--solo-glow); }
+    .log-panel.hive { box-shadow: 0 0 20px var(--hive-glow); }
+
+    .log-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .solo .log-header, .log-panel.solo .log-header { color: var(--solo-accent); }
+    .hive .log-header, .log-panel.hive .log-header { color: var(--hive-accent); }
+
+    .log-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .log-panel.solo .log-dot { background: var(--solo-accent); }
+    .log-panel.hive .log-dot { background: var(--hive-accent); }
+    .log-dot.active { animation: blink 1.5s ease-in-out infinite; }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .log-body {
+      height: 350px;
+      overflow-y: auto;
+      padding: 0.75rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      line-height: 1.6;
+      color: var(--dim);
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .log-body::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .log-body::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 4px;
+    }
+
+    .log-body::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    .log-body::-webkit-scrollbar-thumb:hover {
+      background: #2e2e42;
+    }
+
+    .log-panel.solo .log-body::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.3); }
+    .log-panel.solo .log-body::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.5); }
+    .log-panel.hive .log-body::-webkit-scrollbar-thumb { background: rgba(245, 158, 11, 0.3); }
+    .log-panel.hive .log-body::-webkit-scrollbar-thumb:hover { background: rgba(245, 158, 11, 0.5); }
+
+    .log-empty {
+      color: var(--dim);
+      font-style: italic;
+      opacity: 0.5;
+    }
+
+    /* Tactical Queen decomposition panel */
+    .queen-panel {
+      max-width: 1400px;
+      margin: 0 auto 1.5rem;
+      padding: 0 2rem;
+    }
+
+    .queen-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 0 20px var(--hive-glow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .queen-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--hive-accent), transparent);
+    }
+
+    .queen-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .queen-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--hive-accent);
+      letter-spacing: 0.03em;
+    }
+
+    .queen-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--dim);
+      margin-left: auto;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .phase {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 0.9rem;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.3s ease;
+    }
+
+    .phase-label {
+      font-size: 0.65rem;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.25rem;
+    }
+
+    .phase-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .phase-state {
+      font-size: 0.7rem;
+      margin-top: 0.3rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .phase.pending .phase-state { color: var(--dim); }
+    .phase.active {
+      border-color: var(--hive-accent);
+      background: rgba(245, 158, 11, 0.08);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
+    }
+    .phase.active .phase-state { color: var(--hive-accent); }
+    .phase.active .phase-name { color: var(--hive-accent); }
+    .phase.done {
+      border-color: rgba(34, 197, 94, 0.4);
+      background: rgba(34, 197, 94, 0.05);
+    }
+    .phase.done .phase-state { color: var(--green); }
+
+    .arrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+      color: var(--dim);
+      text-align: center;
+    }
+
+    .arrow.lit { color: var(--hive-accent); }
+
+    .handoff {
+      background: #0a0a12;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--hive-accent);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      line-height: 1.6;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .handoff-label {
+      font-size: 0.68rem;
+      color: var(--hive-accent);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+    }
+
+    .handoff-empty {
+      color: var(--dim);
+      font-style: italic;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.5rem 0;
+    }
+
+    .winner-banner {
+      text-align: center;
+      padding: 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 800;
+      display: none;
+    }
+
+    .winner-banner.visible { display: block; animation: fadeIn 0.5s ease-out; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--dim);
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>HIVE MIND vs SOLO AGENT</h1>
+    <div class="subtitle">AI Tinkerers Montreal &middot; April 2026</div>
+  </div>
+
+  <!-- LOG PANELS -->
+  <div class="logs-section">
+    <div class="log-panel solo">
+      <div class="log-header">
+        <span class="log-dot" id="solo-log-dot"></span>
+        SOLO AGENT LOG
+      </div>
+      <div class="log-body" id="solo-log"><span class="log-empty">Waiting for output...</span></div>
+    </div>
+    <div class="log-panel hive">
+      <div class="log-header">
+        <span class="log-dot" id="hive-log-dot"></span>
+        HIVE MIND LOG
+      </div>
+      <div class="log-body" id="hive-log"><span class="log-empty">Waiting for output...</span></div>
+    </div>
+  </div>
+
+  <div class="arena">
+    <!-- SOLO SIDE -->
+    <div class="side solo" id="solo-side">
+      <div class="side-header">
+        <span class="side-icon">&#x1f9d1;</span>
+        <span class="side-title">SOLO AGENT</span>
+        <span class="status-badge status-waiting" id="solo-status">WAITING</span>
+      </div>
+      <div class="top-metrics">
+        <div class="metric">
+          <div class="metric-label">Files</div>
+          <div class="metric-value" id="solo-files">0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Lines</div>
+          <div class="metric-value" id="solo-lines">0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Tests</div>
+          <div class="metric-value" id="solo-tests">-</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Coverage</div>
+          <div class="metric-value" id="solo-coverage">-</div>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-bar-fill" id="solo-progress" style="width: 0%"></div></div>
+      <div class="files-list" id="solo-files-list"></div>
+      <table class="details-table" id="solo-details">
+        <tr><td>Time</td><td id="solo-time">--</td></tr>
+        <tr><td>Model</td><td id="solo-model">--</td></tr>
+        <tr><td>Tokens</td><td id="solo-tokens">--</td></tr>
+        <tr><td>Cost</td><td id="solo-cost">--</td></tr>
+        <tr><td>Implementation</td><td id="solo-impl">--</td></tr>
+        <tr><td>Tests Written</td><td id="solo-has-tests">--</td></tr>
+        <tr><td>Tests Passing</td><td id="solo-passing">--</td></tr>
+        <tr><td>Coverage</td><td id="solo-cov-detail">--</td></tr>
+        <tr><td>Edge Cases</td><td id="solo-edge">--</td></tr>
+        <tr><td>Code Lines</td><td id="solo-code-lines">--</td></tr>
+        <tr><td>Test Lines</td><td id="solo-test-lines">--</td></tr>
+        <tr><td>Max Complexity</td><td id="solo-complexity">--</td></tr>
+        <tr><td>Throughput</td><td id="solo-throughput">--</td></tr>
+        <tr><td>Conciseness</td><td id="solo-conciseness">--</td></tr>
+      </table>
+      <div class="score-section">
+        <div class="score-label">Score</div>
+        <div class="score-value" id="solo-score">--</div>
+      </div>
+    </div>
+
+    <!-- HIVE SIDE -->
+    <div class="side hive" id="hive-side">
+      <div class="side-header">
+        <span class="side-icon">&#x1f41d;</span>
+        <span class="side-title">HIVE MIND</span>
+        <span class="status-badge status-waiting" id="hive-status">WAITING</span>
+      </div>
+      <div class="top-metrics">
+        <div class="metric">
+          <div class="metric-label">Files</div>
+          <div class="metric-value" id="hive-files">0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Lines</div>
+          <div class="metric-value" id="hive-lines">0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Tests</div>
+          <div class="metric-value" id="hive-tests">-</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Coverage</div>
+          <div class="metric-value" id="hive-coverage">-</div>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-bar-fill" id="hive-progress" style="width: 0%"></div></div>
+      <div class="files-list" id="hive-files-list"></div>
+      <table class="details-table" id="hive-details">
+        <tr><td>Time</td><td id="hive-time">--</td></tr>
+        <tr><td>Model</td><td id="hive-model">--</td></tr>
+        <tr><td>Tokens</td><td id="hive-tokens">--</td></tr>
+        <tr><td>Cost</td><td id="hive-cost">--</td></tr>
+        <tr><td>Implementation</td><td id="hive-impl">--</td></tr>
+        <tr><td>Tests Written</td><td id="hive-has-tests">--</td></tr>
+        <tr><td>Tests Passing</td><td id="hive-passing">--</td></tr>
+        <tr><td>Coverage</td><td id="hive-cov-detail">--</td></tr>
+        <tr><td>Edge Cases</td><td id="hive-edge">--</td></tr>
+        <tr><td>Code Lines</td><td id="hive-code-lines">--</td></tr>
+        <tr><td>Test Lines</td><td id="hive-test-lines">--</td></tr>
+        <tr><td>Max Complexity</td><td id="hive-complexity">--</td></tr>
+        <tr><td>Throughput</td><td id="hive-throughput">--</td></tr>
+        <tr><td>Conciseness</td><td id="hive-conciseness">--</td></tr>
+      </table>
+      <div class="score-section">
+        <div class="score-label">Score</div>
+        <div class="score-value" id="hive-score">--</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="winner-banner" id="winner-banner"></div>
+
+  <div class="footer">
+    Challenge: Sliding Window Rate Limiter &middot; Python &middot; ruflo hive-mind
+  </div>
+
+  <script>
+    const evtSource = new EventSource('/events');
+    let soloLogLen = 0;
+    let hiveLogLen = 0;
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function yesNo(val) {
+      return val
+        ? '<span class="val-yes">Yes</span>'
+        : '<span class="val-no">No</span>';
+    }
+
+    function updateSide(side, data) {
+      const d = data[side];
+      if (!d) return;
+
+      const statusEl = document.getElementById(side + '-status');
+      statusEl.textContent = d.status.toUpperCase();
+      statusEl.className = 'status-badge status-' + d.status;
+
+      document.getElementById(side + '-files').textContent = d.files ? d.files.length : 0;
+      document.getElementById(side + '-lines').textContent = d.lines || 0;
+
+      const filesList = document.getElementById(side + '-files-list');
+      if (d.files && d.files.length > 0) {
+        filesList.innerHTML = d.files.map(function(f) {
+          return '<div class="file"><span class="file-name">' + f.name + '</span><span>' + f.lines + ' lines</span></div>';
+        }).join('');
+      } else {
+        filesList.innerHTML = '';
+      }
+
+      var progress = 0;
+      if (d.status === 'running' || d.status === 'coding') progress = 33;
+      if (d.status === 'testing') progress = 66;
+      if (d.status === 'done') progress = 100;
+      document.getElementById(side + '-progress').style.width = progress + '%';
+
+      if (data.results && data.results[side]) {
+        const r = data.results[side];
+
+        const testsEl = document.getElementById(side + '-tests');
+        testsEl.textContent = r.tests_passed + '/' + r.tests_total;
+        testsEl.className = 'metric-value' + (r.tests_passed === r.tests_total && r.tests_total > 0 ? ' highlight-green' : r.tests_failed > 0 ? ' highlight-red' : '');
+
+        const covEl = document.getElementById(side + '-coverage');
+        covEl.textContent = r.coverage_percent + '%';
+        covEl.className = 'metric-value' + (r.coverage_percent >= 80 ? ' highlight-green' : '');
+
+        document.getElementById(side + '-score').textContent = r.score + '/100';
+
+        document.getElementById(side + '-time').textContent = (r.duration_seconds || d.duration || '--') + 's';
+        document.getElementById(side + '-impl').innerHTML = yesNo(r.has_implementation);
+        document.getElementById(side + '-has-tests').innerHTML = yesNo(r.has_tests);
+        document.getElementById(side + '-passing').textContent = r.tests_passed + '/' + r.tests_total;
+        document.getElementById(side + '-cov-detail').textContent = r.coverage_percent + '%';
+        document.getElementById(side + '-edge').textContent = r.edge_cases.count + '/' + r.edge_cases.total;
+        document.getElementById(side + '-code-lines').textContent = r.lines_impl;
+        document.getElementById(side + '-test-lines').textContent = r.lines_test;
+
+        const concEl = document.getElementById(side + '-conciseness');
+        if (concEl && r.conciseness) {
+          concEl.textContent = r.conciseness.points.toFixed(1) + '/10';
+          concEl.className =
+            r.conciseness.points >= 7 ? 'val-yes' :
+            r.conciseness.points <= 3 ? 'val-no' : '';
+        }
+
+        // --- Model / Tokens / Cost (from stream-json parser) ---
+        const u = r.usage;
+        const modelEl = document.getElementById(side + '-model');
+        const tokensEl = document.getElementById(side + '-tokens');
+        const costEl = document.getElementById(side + '-cost');
+        if (modelEl) modelEl.textContent = (u && u.model)
+          ? u.model.replace(/^claude-/, '').slice(0, 24)
+          : '--';
+        if (tokensEl) tokensEl.textContent = u
+          ? ((u.input_tokens || 0) + (u.output_tokens || 0)).toLocaleString()
+            + ' (' + (u.input_tokens || 0).toLocaleString() + ' in / '
+            + (u.output_tokens || 0).toLocaleString() + ' out)'
+          : '--';
+        if (costEl) costEl.textContent = (u && typeof u.total_cost_usd === 'number')
+          ? '$' + u.total_cost_usd.toFixed(4)
+          : '--';
+
+        // --- Max Complexity (radon) ---
+        const cx = r.complexity_score;
+        const cxEl = document.getElementById(side + '-complexity');
+        if (cxEl && cx && cx.max_cc !== null && cx.max_cc !== undefined) {
+          cxEl.textContent = cx.max_cc + ' (' + cx.points + '/' + cx.max_points + ' pts)';
+          cxEl.className =
+            cx.max_cc <= 5 ? 'val-yes' :
+            cx.max_cc > 15 ? 'val-no' : '';
+        } else if (cxEl) {
+          cxEl.textContent = '--';
+        }
+
+        // --- Throughput (ops/sec under contention) ---
+        const tp = r.throughput_score;
+        const tpEl = document.getElementById(side + '-throughput');
+        if (tpEl && tp && typeof tp.ops_per_sec === 'number') {
+          const ops = tp.ops_per_sec;
+          const opsStr = ops >= 1e6 ? (ops / 1e6).toFixed(2) + 'M/s'
+                      : ops >= 1e3 ? (ops / 1e3).toFixed(1) + 'k/s'
+                      : ops.toFixed(0) + '/s';
+          tpEl.textContent = opsStr + ' (' + tp.points.toFixed(1) + '/' + tp.max_points + ' pts)';
+          tpEl.className =
+            tp.points >= 4 ? 'val-yes' :
+            tp.points <= 1 ? 'val-no' : '';
+        } else if (tpEl) {
+          tpEl.textContent = '--';
+        }
+      }
+    }
+
+    function fetchLogs() {
+      ['solo', 'hive'].forEach(function(side) {
+        fetch('/api/logs/' + side)
+          .then(function(r) { return r.text(); })
+          .then(function(text) {
+            if (!text || text.length === 0) return;
+
+            var prevLen = side === 'solo' ? soloLogLen : hiveLogLen;
+            if (text.length === prevLen) return;
+
+            if (side === 'solo') soloLogLen = text.length;
+            else hiveLogLen = text.length;
+
+            var el = document.getElementById(side + '-log');
+            var wasAtBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
+            el.textContent = text;
+
+            if (wasAtBottom) {
+              el.scrollTop = el.scrollHeight;
+            }
+
+            var dot = document.getElementById(side + '-log-dot');
+            if (text.length > 0) dot.classList.add('active');
+          })
+          .catch(function() {});
+      });
+    }
+
+    evtSource.onmessage = function(event) {
+      const data = JSON.parse(event.data);
+
+      updateSide('solo', data);
+      updateSide('hive', data);
+
+      if (data.results && data.results.solo && data.results.hive) {
+        const banner = document.getElementById('winner-banner');
+        const soloScore = data.results.solo.score;
+        const hiveScore = data.results.hive.score;
+
+        if (soloScore > hiveScore) {
+          banner.innerHTML = '&#x1f9d1; Solo Agent wins! ' + soloScore + ' - ' + hiveScore;
+          banner.style.color = 'var(--solo-accent)';
+        } else if (hiveScore > soloScore) {
+          banner.innerHTML = '&#x1f41d; Hive Mind wins! ' + hiveScore + ' - ' + soloScore;
+          banner.style.color = 'var(--hive-accent)';
+        } else {
+          banner.innerHTML = '&#x1f91d; Tie! ' + soloScore + ' - ' + hiveScore;
+          banner.style.color = 'var(--text)';
+        }
+        banner.classList.add('visible');
+
+        document.getElementById('solo-log-dot').classList.remove('active');
+        document.getElementById('hive-log-dot').classList.remove('active');
+      }
+    };
+
+    setInterval(fetchLogs, 1200);
+    fetchLogs();
+  </script>
+</body>
+</html>

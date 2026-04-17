@@ -1,0 +1,16 @@
+[project]
+name = "solo-challenge"
+version = "0.1.0"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["src"]
+python_files = ["test_*.py"]
+pythonpath = ["src"]
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["src/test_*.py"]
+
+[tool.coverage.report]
+show_missing = true
