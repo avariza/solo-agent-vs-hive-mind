@@ -3,10 +3,10 @@
     "label": "Solo Agent",
     "has_implementation": true,
     "has_tests": true,
-    "lines_impl": 50,
-    "lines_test": 217,
-    "tests_total": 22,
-    "tests_passed": 22,
+    "lines_impl": 46,
+    "lines_test": 204,
+    "tests_total": 20,
+    "tests_passed": 20,
     "tests_failed": 0,
     "coverage_percent": 100,
     "edge_cases": {
@@ -46,88 +46,130 @@
       ],
       "method": "behavioral_probe"
     },
-    "score": 96.8,
+    "score": 3.86,
     "metrics": {
       "complexity": {
-        "max_cc": 8,
-        "avg_cc": 6.33,
-        "total_blocks": 3,
+        "max_cc": 7,
+        "avg_cc": 4,
+        "total_blocks": 4,
         "top_blocks": [
           {
             "name": "allow_request",
-            "cc": 8,
-            "line": 21
+            "cc": 7,
+            "line": 23
           },
           {
             "name": "RateLimiter",
-            "cc": 7,
+            "cc": 5,
             "line": 6
           },
           {
             "name": "__init__",
-            "cc": 4,
-            "line": 9
+            "cc": 3,
+            "line": 7
+          },
+          {
+            "name": "_get_lock",
+            "cc": 1,
+            "line": 19
           }
         ],
-        "loc": 49,
-        "lloc": 38,
+        "loc": 45,
+        "lloc": 35,
         "sloc": 35,
         "comments": 1
       },
       "throughput": {
-        "ops_per_sec": 1483189.6,
+        "ops_per_sec": 65099.5,
         "total_ops": 32000,
         "threads": 8,
-        "elapsed_sec": 0.022,
-        "p50_latency_us": 0.42,
-        "p99_latency_us": 0.62,
+        "elapsed_sec": 0.492,
+        "p50_latency_us": 14.33,
+        "p99_latency_us": 4420.42,
         "errors_sample": []
       },
       "error": null
     },
     "usage": {
       "model": "claude-opus-4-6",
-      "input_tokens": 7,
-      "output_tokens": 3549,
-      "cache_creation_input_tokens": 4641,
-      "cache_read_input_tokens": 144339,
-      "total_cost_usd": 0.19105075,
+      "input_tokens": 69,
+      "output_tokens": 3231,
+      "cache_creation_input_tokens": 4390,
+      "cache_read_input_tokens": 131485,
+      "total_cost_usd": 0.17540499999999998,
       "num_turns": 6,
-      "duration_ms": 51901,
+      "duration_ms": 45344,
       "error": null
     },
     "conciseness": {
       "impl_factor": 1,
-      "test_factor": 0.61,
-      "raw": 0.883,
+      "test_factor": 0.653,
+      "raw": 0.896,
       "correctness_gate": 1,
-      "points": 8.83,
+      "points": 8.96,
       "max_points": 10
     },
     "complexity_score": {
-      "max_cc": 8,
-      "avg_cc": 6.33,
+      "max_cc": 7,
+      "avg_cc": 4,
       "points": 3,
       "max_points": 5
     },
     "throughput_score": {
-      "ops_per_sec": 1483189.6,
-      "p99_latency_us": 0.62,
-      "points": 5,
+      "ops_per_sec": 65099.5,
+      "p99_latency_us": 4420.42,
+      "points": 0.57,
       "max_points": 5
     },
-    "duration_seconds": 56
+    "rubric": {
+      "correctness": {
+        "points": 2,
+        "max": 2,
+        "test_pass_rate": 1,
+        "probe_pass_rate": 1
+      },
+      "deliverable": {
+        "points": 0.5,
+        "max": 0.5,
+        "has_implementation": true,
+        "has_tests": true
+      },
+      "maintainability": {
+        "points": 0.8,
+        "max": 1,
+        "coverage_pts": 0.6,
+        "complexity_pts": 0.2,
+        "coverage_percent": 100,
+        "max_cc": 7
+      },
+      "performance": {
+        "points": 0.115,
+        "max": 1,
+        "ops_per_sec": 65099.5,
+        "gated_by_correctness": 1
+      },
+      "conciseness": {
+        "points": 0.448,
+        "max": 0.5,
+        "raw": 0.896,
+        "gated_by_correctness": 1,
+        "impl_factor": 1,
+        "test_factor": 0.653
+      }
+    },
+    "score_max": 5,
+    "duration_seconds": 49
   },
   "hive": {
     "label": "Hive Mind",
     "has_implementation": true,
     "has_tests": true,
-    "lines_impl": 59,
-    "lines_test": 224,
-    "tests_total": 19,
-    "tests_passed": 19,
+    "lines_impl": 81,
+    "lines_test": 164,
+    "tests_total": 23,
+    "tests_passed": 23,
     "tests_failed": 0,
-    "coverage_percent": 100,
+    "coverage_percent": 98.53,
     "edge_cases": {
       "count": 6,
       "total": 6,
@@ -165,82 +207,124 @@
       ],
       "method": "behavioral_probe"
     },
-    "score": 92.1,
+    "score": 4.9,
     "metrics": {
       "complexity": {
-        "max_cc": 8,
-        "avg_cc": 5.25,
-        "total_blocks": 4,
+        "max_cc": 5,
+        "avg_cc": 3.44,
+        "total_blocks": 9,
         "top_blocks": [
           {
-            "name": "allow_request",
-            "cc": 8,
-            "line": 33
+            "name": "time_until_allowed",
+            "cc": 5,
+            "line": 49
           },
           {
             "name": "RateLimiter",
-            "cc": 6,
+            "cc": 4,
+            "line": 10
+          },
+          {
+            "name": "_evict_stale",
+            "cc": 4,
+            "line": 66
+          },
+          {
+            "name": "_bad_int",
+            "cc": 3,
             "line": 6
           },
           {
             "name": "__init__",
-            "cc": 4,
-            "line": 9
-          },
-          {
-            "name": "_get_client_lock",
             "cc": 3,
-            "line": 24
+            "line": 13
           }
         ],
-        "loc": 58,
-        "lloc": 41,
-        "sloc": 38,
-        "comments": 7
+        "loc": 80,
+        "lloc": 70,
+        "sloc": 68,
+        "comments": 0
       },
       "throughput": {
-        "ops_per_sec": 72051.6,
+        "ops_per_sec": 1120034.8,
         "total_ops": 32000,
         "threads": 8,
-        "elapsed_sec": 0.444,
-        "p50_latency_us": 13.04,
-        "p99_latency_us": 4358.12,
+        "elapsed_sec": 0.029,
+        "p50_latency_us": 0.54,
+        "p99_latency_us": 0.96,
         "errors_sample": []
       },
       "error": null
     },
     "usage": {
-      "model": "claude-opus-4-6",
-      "input_tokens": 7,
-      "output_tokens": 3906,
-      "cache_creation_input_tokens": 5147,
-      "cache_read_input_tokens": 144405,
-      "total_cost_usd": 0.20316625,
-      "num_turns": 6,
-      "duration_ms": 57909,
+      "model": "claude-haiku-4-5-20251001",
+      "input_tokens": 66,
+      "output_tokens": 7488,
+      "cache_creation_input_tokens": 13553,
+      "cache_read_input_tokens": 719337,
+      "total_cost_usd": 0.12805495,
+      "num_turns": 12,
+      "duration_ms": 70609,
       "error": null
     },
     "conciseness": {
-      "impl_factor": 0.94,
-      "test_factor": 0.587,
-      "raw": 0.834,
+      "impl_factor": 0.793,
+      "test_factor": 0.787,
+      "raw": 0.791,
       "correctness_gate": 1,
-      "points": 8.34,
+      "points": 7.91,
       "max_points": 10
     },
     "complexity_score": {
-      "max_cc": 8,
-      "avg_cc": 5.25,
-      "points": 3,
+      "max_cc": 5,
+      "avg_cc": 3.44,
+      "points": 5,
       "max_points": 5
     },
     "throughput_score": {
-      "ops_per_sec": 72051.6,
-      "p99_latency_us": 4358.12,
-      "points": 0.79,
+      "ops_per_sec": 1120034.8,
+      "p99_latency_us": 0.96,
+      "points": 5,
       "max_points": 5
     },
-    "duration_seconds": 61
+    "rubric": {
+      "correctness": {
+        "points": 2,
+        "max": 2,
+        "test_pass_rate": 1,
+        "probe_pass_rate": 1
+      },
+      "deliverable": {
+        "points": 0.5,
+        "max": 0.5,
+        "has_implementation": true,
+        "has_tests": true
+      },
+      "maintainability": {
+        "points": 1,
+        "max": 1,
+        "coverage_pts": 0.6,
+        "complexity_pts": 0.4,
+        "coverage_percent": 98.53,
+        "max_cc": 5
+      },
+      "performance": {
+        "points": 1,
+        "max": 1,
+        "ops_per_sec": 1120034.8,
+        "gated_by_correctness": 1
+      },
+      "conciseness": {
+        "points": 0.396,
+        "max": 0.5,
+        "raw": 0.791,
+        "gated_by_correctness": 1,
+        "impl_factor": 0.793,
+        "test_factor": 0.787
+      }
+    },
+    "score_max": 5,
+    "duration_seconds": 74
   },
-  "timestamp": "2026-04-17T04:28:23.451Z"
+  "timestamp": "2026-04-20T04:13:35.035Z"
 }

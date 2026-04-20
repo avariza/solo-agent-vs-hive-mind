@@ -1,49 +1,45 @@
 import threading
 import time
-from collections import deque
+from collections import defaultdict
 
 
 class RateLimiter:
-    """Thread-safe weighted sliding window rate limiter."""
-
-    def __init__(self, max_requests: int, window_seconds: float) -> None:
-        if not isinstance(max_requests, int) or max_requests <= 0:
-            raise ValueError("max_requests must be a positive integer")
+    def __init__(self, max_requests: int, window_seconds: float):
+        if max_requests <= 0:
+            raise ValueError("max_requests must be positive")
         if window_seconds <= 0:
             raise ValueError("window_seconds must be positive")
 
-        self._max_requests = max_requests
-        self._window_seconds = window_seconds
-        self._clients: dict[str, deque[tuple[float, int]]] = {}
-        self._client_costs: dict[str, int] = {}
-        self._lock = threading.Lock()
+        self.max_requests = max_requests
+        self.window_seconds = window_seconds
+        self._locks: dict[str, threading.Lock] = defaultdict(threading.Lock)
+        self._requests: dict[str, list[tuple[float, int]]] = defaultdict(list)
+        self._global_lock = threading.Lock()
+
+    def _get_lock(self, client_id: str) -> threading.Lock:
+        with self._global_lock:
+            return self._locks[client_id]
 
     def allow_request(self, client_id: str, cost: int = 1) -> bool:
-        if not isinstance(cost, int) or cost <= 0:
-            raise ValueError("cost must be a positive integer")
-        if cost > self._max_requests:
-            raise ValueError("cost cannot exceed max_requests")
+        if cost <= 0:
+            raise ValueError("cost must be positive")
+        if cost > self.max_requests:
+            raise ValueError("cost exceeds max_requests")
 
-        now = time.monotonic()
-        cutoff = now - self._window_seconds
+        lock = self._get_lock(client_id)
+        with lock:
+            now = time.monotonic()
+            cutoff = now - self.window_seconds
 
-        with self._lock:
-            if client_id not in self._clients:
-                self._clients[client_id] = deque()
-                self._client_costs[client_id] = 0
+            # Evict expired entries (strictly greater than window age)
+            entries = self._requests[client_id]
+            self._requests[client_id] = [
+                (ts, c) for ts, c in entries if ts > cutoff
+            ]
 
-            window = self._clients[client_id]
+            used = sum(c for _, c in self._requests[client_id])
 
-            # Evict expired entries (strictly <= cutoff, i.e. exactly at boundary is expired)
-            while window and window[0][0] <= cutoff:
-                _, expired_cost = window.popleft()
-                self._client_costs[client_id] -= expired_cost
-
-            current_cost = self._client_costs[client_id]
-
-            if current_cost + cost <= self._max_requests:
-                window.append((now, cost))
-                self._client_costs[client_id] += cost
+            if used + cost <= self.max_requests:
+                self._requests[client_id].append((now, cost))
                 return True
-
             return False

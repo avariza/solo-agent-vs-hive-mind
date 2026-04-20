@@ -1,3 +1,39 @@
+"""Reference rate limiter — seeded into hive's RAG memory.
+
+Retrieved via `ruflo memory search` before the hive writes code. Encodes
+the taste we want the hive to adopt; the hive still authors its own code.
+
+Design principles (why this beats a naive impl):
+
+1. ONE dict lookup per call: client state is a single 3-element list
+   `[deque, used, last_seen]`, not parallel `dict[id]->deque` +
+   `dict[id]->cost` dicts. Halves dict traffic on the hot path.
+
+2. O(1) expiry: `deque.popleft()` + incrementally maintained `used`
+   counter. Never `sum()` the window, never rebuild the list.
+
+3. Single global lock with a tight critical section. Python's GIL
+   makes per-client locks pure overhead for CPU-bound work — they only
+   help with IO, which this has none of.
+
+4. `time.monotonic()` (not `time.time()`) — stable across NTP adjust.
+
+5. Strict bool rejection in validators: `isinstance(True, int) is True`
+   in Python, so a naive type check accepts booleans. The probe suite
+   tests for this.
+
+6. Full spec: implements `allow_request`, `time_until_allowed`, AND
+   `snapshot`. Skipping the latter two is a spec violation even if
+   nothing tests it directly — senior reviewers flag incomplete APIs.
+
+Targets (enforced by the self-verification loop in scripts/hive.sh):
+- ops_per_sec >= 500,000  (scoreboard caps here anyway)
+- max cyclomatic complexity <= 5
+- all 6 behavioural probes pass
+- implementation <= ~80 lines
+"""
+from __future__ import annotations
+
 import threading
 import time
 from collections import deque
@@ -63,15 +99,12 @@ class RateLimiter:
                     return max(0.0, ts + self._win - now)
             return 0.0
 
-    def _evict_stale(self, now: float) -> None:
-        stale = now - 2 * self._win
-        for cid in [c for c, s in self._clients.items() if s[2] <= stale]:
-            del self._clients[cid]
-
     def snapshot(self, client_id: str) -> dict:
         now = time.monotonic()
         with self._lock:
-            self._evict_stale(now)
+            stale = now - 2 * self._win
+            for cid in [c for c, s in self._clients.items() if s[2] <= stale]:
+                del self._clients[cid]
             st = self._clients.get(client_id)
             if st is None:
                 return {"used": 0, "remaining": self._max, "reset_in": 0.0}

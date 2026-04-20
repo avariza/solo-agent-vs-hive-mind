@@ -233,30 +233,94 @@ function evaluateSide(dir, label, side) {
     max_points: 5,
   };
 
-  // Final scoring (sums to 100 max):
-  //   implementation exists ......  10
-  //   tests exist ................  10
-  //   test pass rate ............. ×30
-  //   coverage ................... ×0.1  (max 10, was 20 — radon/throughput replace half)
-  //   coverage ≥ 80% bonus .......   5
-  //   edge cases (probes) ........ ×15
-  //   conciseness (gated) ........  10
-  //   complexity (radon) .........   5
-  //   throughput (gated) .........   5
-  const rawScore =
-    (result.has_implementation ? 10 : 0) +
-    (result.has_tests ? 10 : 0) +
-    testPassRate * 30 +
-    Math.min(result.coverage_percent, 100) * 0.1 +
-    edgeRatio * 15 +
-    (result.coverage_percent >= 80 ? 5 : 0) +
-    concisenessPoints +
-    complexityPoints +
-    throughputPoints;
+  // 5-point rubric (total 5.0) — senior-reviewer weighted, "what actually
+  // ships to prod" first. Conciseness and raw complexity/throughput point
+  // tallies above are kept as informational readouts for the dashboard,
+  // but the final score is driven only by the four buckets below.
+  //
+  //   correctness  (tests + probes, gated by min) ........ 2.0
+  //   deliverable  (impl + tests exist, 0.25 each) ........ 0.5
+  //   maintainability                              ........ 1.0
+  //       coverage:  ≥80% → 0.6, ≥60% → 0.3, else 0
+  //       max CC:    ≤5   → 0.4, ≤10  → 0.2, else 0
+  //   performance  (throughput, log-scaled, × correctness)  1.0
+  //       50k ops/s → 0, 500k → 1 (cap). Broken code = 0.
+  //   conciseness  (0.5 × concisenessRaw × correctness)     0.5
+  //       Shorter impl/tests earn more; gated so broken short code = 0.
+  const correctnessPts = 2 * correctness;
 
-  // Round to 1 decimal so sub-integer differentiators (conciseness,
-  // throughput) remain visible when both sides are otherwise perfect.
-  result.score = Math.round(rawScore * 10) / 10;
+  const deliverablePts =
+    (result.has_implementation ? 0.25 : 0) +
+    (result.has_tests ? 0.25 : 0);
+
+  const coveragePts =
+    result.coverage_percent >= 80 ? 0.6 :
+    result.coverage_percent >= 60 ? 0.3 : 0;
+
+  const ccPts =
+    typeof maxCC === "number" && maxCC > 0
+      ? maxCC <= 5 ? 0.4 : maxCC <= 10 ? 0.2 : 0
+      : 0;
+
+  const maintainabilityPts = coveragePts + ccPts;
+
+  // Conciseness already computed above as `concisenessRaw` (0..1), gated
+  // by `correctness` so a 3-line broken impl can't game it.
+  const concisenessPts = 0.5 * concisenessRaw * correctness;
+
+  let perfPts = 0;
+  if (typeof ops === "number" && ops > 0) {
+    const perfRaw = Math.log10(ops / 50000); // 50k=0, 500k=1, 5M=2
+    perfPts = Math.max(0, Math.min(1, perfRaw)) * correctness;
+  }
+
+  result.rubric = {
+    correctness: {
+      points: Math.round(correctnessPts * 1000) / 1000,
+      max: 2,
+      test_pass_rate: Math.round(testPassRate * 1000) / 1000,
+      probe_pass_rate: Math.round(edgeRatio * 1000) / 1000,
+    },
+    deliverable: {
+      points: deliverablePts,
+      max: 0.5,
+      has_implementation: result.has_implementation,
+      has_tests: result.has_tests,
+    },
+    maintainability: {
+      points: Math.round(maintainabilityPts * 1000) / 1000,
+      max: 1,
+      coverage_pts: coveragePts,
+      complexity_pts: ccPts,
+      coverage_percent: result.coverage_percent,
+      max_cc: maxCC ?? null,
+    },
+    performance: {
+      points: Math.round(perfPts * 1000) / 1000,
+      max: 1,
+      ops_per_sec: ops ?? null,
+      gated_by_correctness: Math.round(correctness * 1000) / 1000,
+    },
+    conciseness: {
+      points: Math.round(concisenessPts * 1000) / 1000,
+      max: 0.5,
+      raw: Math.round(concisenessRaw * 1000) / 1000,
+      gated_by_correctness: Math.round(correctness * 1000) / 1000,
+      impl_factor: Math.round(implFactor * 1000) / 1000,
+      test_factor: Math.round(testFactor * 1000) / 1000,
+    },
+  };
+
+  const rawScore =
+    correctnessPts +
+    deliverablePts +
+    maintainabilityPts +
+    perfPts +
+    concisenessPts;
+
+  // Round to 2 decimals so sub-tenth differentiators stay visible on /5.
+  result.score = Math.round(rawScore * 100) / 100;
+  result.score_max = 5;
 
   return result;
 }
@@ -323,13 +387,8 @@ const rows = [
   ["Model", shortModel(solo.usage), shortModel(hive.usage)],
   ["Tokens (in+out)", fmtTokens(solo.usage), fmtTokens(hive.usage)],
   ["Cost", fmtCost(solo.usage), fmtCost(hive.usage)],
-  ["Implementation", solo.has_implementation ? "Yes" : "No", hive.has_implementation ? "Yes" : "No"],
-  ["Tests", solo.has_tests ? "Yes" : "No", hive.has_tests ? "Yes" : "No"],
-  ["Tests Passing", `${solo.tests_passed}/${solo.tests_total}`, `${hive.tests_passed}/${hive.tests_total}`],
   ["Coverage", `${solo.coverage_percent}%`, `${hive.coverage_percent}%`],
   ["Edge Cases", `${solo.edge_cases.count}/${solo.edge_cases.total}`, `${hive.edge_cases.count}/${hive.edge_cases.total}`],
-  ["Code Lines", `${solo.lines_impl}`, `${hive.lines_impl}`],
-  ["Test Lines", `${solo.lines_test}`, `${hive.lines_test}`],
   [
     "Max Complexity",
     solo.complexity_score.max_cc !== null ? `${solo.complexity_score.max_cc} (CC)` : "--",
@@ -341,11 +400,31 @@ const rows = [
     fmtOps(hive.throughput_score.ops_per_sec),
   ],
   [
-    "Conciseness",
-    `${solo.conciseness.points.toFixed(1)}/10`,
-    `${hive.conciseness.points.toFixed(1)}/10`,
+    "Correctness",
+    `${solo.rubric.correctness.points.toFixed(2)}/2`,
+    `${hive.rubric.correctness.points.toFixed(2)}/2`,
   ],
-  ["SCORE", `${solo.score}/100`, `${hive.score}/100`],
+  [
+    "Deliverable",
+    `${solo.rubric.deliverable.points.toFixed(2)}/0.5`,
+    `${hive.rubric.deliverable.points.toFixed(2)}/0.5`,
+  ],
+  [
+    "Maintainability",
+    `${solo.rubric.maintainability.points.toFixed(2)}/1`,
+    `${hive.rubric.maintainability.points.toFixed(2)}/1`,
+  ],
+  [
+    "Performance",
+    `${solo.rubric.performance.points.toFixed(2)}/1`,
+    `${hive.rubric.performance.points.toFixed(2)}/1`,
+  ],
+  [
+    "Conciseness",
+    `${solo.rubric.conciseness.points.toFixed(2)}/0.5`,
+    `${hive.rubric.conciseness.points.toFixed(2)}/0.5`,
+  ],
+  ["SCORE", `${solo.score}/5`, `${hive.score}/5`],
 ];
 
 for (const [metric, soloVal, hiveVal] of rows) {

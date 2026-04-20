@@ -2,18 +2,21 @@
   "initialized": true,
   "topology": "hierarchical",
   "workers": [
-    "hive-worker-1776400036425-e88x"
+    "hive-worker-1776658333371-0ome",
+    "hive-worker-1776658333371-99ja",
+    "hive-worker-1776658333371-p2rp",
+    "hive-worker-1776658333371-pt2u"
   ],
   "consensus": {
     "pending": [],
     "history": []
   },
   "sharedMemory": {},
-  "createdAt": "2026-04-17T04:27:15.724Z",
-  "updatedAt": "2026-04-17T04:27:16.425Z",
+  "createdAt": "2026-04-20T04:12:12.747Z",
+  "updatedAt": "2026-04-20T04:12:13.371Z",
   "queen": {
-    "agentId": "queen-1776400035724",
-    "electedAt": "2026-04-17T04:27:15.724Z",
+    "agentId": "queen-1776658332747",
+    "electedAt": "2026-04-20T04:12:12.747Z",
     "term": 1
   }
 }

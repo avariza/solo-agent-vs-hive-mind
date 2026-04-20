@@ -1,15 +1,79 @@
 ========== [HIVE] PREP PHASE ==========
 [HIVE] DEMO_MODE=fast  (challenge: CHALLENGE_FAST.md)
-[HIVE] Working in: /Users/angie.ariza/Desktop/AI-tinkerers-2/challenge/hive
-[HIVE] Model: claude-opus-4-6
-[HIVE] ruflo hive-mind init...
+[HIVE] Working in: /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/challenge/hive
+[HIVE] Model: claude-haiku-4-5-20251001
+
+[HIVE] ruflo memory store — seeding 3 curated patterns to namespace 'hive-gold'...
+[ERROR] Key is required. Use: memory delete -k "key" [-n "namespace"]
+[INFO] Storing in hive-gold/rate-limiter-golden-pattern...
+(node:64024) Warning: To load an ES module, set "type": "module" in the package.json or use the .mjs extension.
+(Use `node --trace-warnings ...` to show where the warning was created)
+/Users/angie.ariza/.npm/_npx/2ed56890c96f58f7/node_modules/@ruvector/rvf-wasm/pkg/rvf_wasm.js:47
+      var thisDir = path.default.dirname(url.default.fileURLToPath(import.meta.url));
+                                                                          ^^^^
+
+SyntaxError: Cannot use 'import.meta' outside a module
+    at wrapSafe (node:internal/modules/cjs/loader:1378:20)
+    at Module._compile (node:internal/modules/cjs/loader:1428:41)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12)
+    at cjsLoader (node:internal/modules/esm/translators:346:17)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:286:7)
+    at ModuleJob.run (node:internal/modules/esm/module_job:234:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:473:24)
+    at async detectBackends (file:///Users/angie.ariza/.npm/_npx/2ed56890c96f58f7/node_modules/@claude-flow/memory/node_modules/agentdb/dist/src/backends/factory.js:86:13)
+
+Node.js v20.18.1
+[INFO] Storing in hive-gold/rate-limiter-edge-cases...
+(node:64079) Warning: To load an ES module, set "type": "module" in the package.json or use the .mjs extension.
+(Use `node --trace-warnings ...` to show where the warning was created)
+/Users/angie.ariza/.npm/_npx/2ed56890c96f58f7/node_modules/@ruvector/rvf-wasm/pkg/rvf_wasm.js:47
+      var thisDir = path.default.dirname(url.default.fileURLToPath(import.meta.url));
+                                                                          ^^^^
+
+SyntaxError: Cannot use 'import.meta' outside a module
+    at wrapSafe (node:internal/modules/cjs/loader:1378:20)
+    at Module._compile (node:internal/modules/cjs/loader:1428:41)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12)
+    at cjsLoader (node:internal/modules/esm/translators:346:17)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:286:7)
+    at ModuleJob.run (node:internal/modules/esm/module_job:234:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:473:24)
+    at async detectBackends (file:///Users/angie.ariza/.npm/_npx/2ed56890c96f58f7/node_modules/@claude-flow/memory/node_modules/agentdb/dist/src/backends/factory.js:86:13)
+
+Node.js v20.18.1
+[INFO] Storing in hive-gold/rate-limiter-consensus-rubric...
+(node:64120) Warning: To load an ES module, set "type": "module" in the package.json or use the .mjs extension.
+(Use `node --trace-warnings ...` to show where the warning was created)
+/Users/angie.ariza/.npm/_npx/2ed56890c96f58f7/node_modules/@ruvector/rvf-wasm/pkg/rvf_wasm.js:47
+      var thisDir = path.default.dirname(url.default.fileURLToPath(import.meta.url));
+                                                                          ^^^^
+
+SyntaxError: Cannot use 'import.meta' outside a module
+    at wrapSafe (node:internal/modules/cjs/loader:1378:20)
+    at Module._compile (node:internal/modules/cjs/loader:1428:41)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12)
+    at cjsLoader (node:internal/modules/esm/translators:346:17)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:286:7)
+    at ModuleJob.run (node:internal/modules/esm/module_job:234:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:473:24)
+    at async detectBackends (file:///Users/angie.ariza/.npm/_npx/2ed56890c96f58f7/node_modules/@claude-flow/memory/node_modules/agentdb/dist/src/backends/factory.js:86:13)
+
+Node.js v20.18.1
+
+[HIVE] ruflo hive-mind init (hierarchical + raft)...
 
 Initializing Hive Mind
 ... Setting up hive infrastructure...                                           Hive Mind initialized
 
 +----- Hive Mind Configuration ------+
-| Hive ID: hive-1776400035724-kuciwf |
-| Queen ID: queen-1776400035724      |
+| Hive ID: hive-1776658332747-s8hvsk |
+| Queen ID: queen-1776658332747      |
 | Topology: hierarchical             |
 | Consensus: raft                    |
 | Max Agents: 15                     |
@@ -20,58 +84,87 @@ Initializing Hive Mind
 [INFO] Queen agent is ready to coordinate worker agents
   Use "claude-flow hive-mind spawn" to add workers
   Use "claude-flow hive-mind spawn --claude" to launch Claude Code
-[HIVE] ruflo hive-mind spawn (4 workers)...
-[INFO] Spawning 1 worker agent(s)...
+[HIVE] ruflo hive-mind spawn (4 workers, tactical queen)...
+[INFO] Spawning 4 worker agent(s)...
 
 +--------------------------------+--------+--------+-------------+
 | Agent ID                       | Role   | Status | Joined      |
 +--------------------------------+--------+--------+-------------+
-| hive-worker-1776400036425-e88x | worker | idle   | 12:27:16 AM |
+| hive-worker-1776658333371-0ome | worker | idle   | 12:12:13 AM |
+| hive-worker-1776658333371-99ja | worker | idle   | 12:12:13 AM |
+| hive-worker-1776658333371-p2rp | worker | idle   | 12:12:13 AM |
+| hive-worker-1776658333371-pt2u | worker | idle   | 12:12:13 AM |
 +--------------------------------+--------+--------+-------------+
 
-[OK] Spawned 1 agent(s)
-  Total workers in hive: 1
+[OK] Spawned 4 agent(s)
+  Total workers in hive: 4
 ========== [HIVE] READY — WAITING FOR STARTING GUN ==========
-========== [HIVE] GO! (t=1776400039) ==========
-[HIVE] Launching Claude Code (model=claude-opus-4-6)...
-[system] model=claude-opus-4-6 tools=88
-Let me check what already exists in the directory.
-[tool] Bash ls -la /Users/angie.ariza/Desktop/AI-tinkerers-2/challenge/hive/src/
-[tool_result] total 8
--rw-r--r--@ 1 angie.ariza  1921536389   68 Apr 17 00:27 __init__.py
-drwxr-xr-x@ 3 angie.ariza  1921536389   96 Apr 17 00:26 .
-drwxr-xr-x@ 5 angie.ariza  1921536389  160 Apr 17 00:27 ..
-[tool] Read /Users/angie.ariza/Desktop/AI-tinkerers-2/challenge/hive/src/__init__.py
-[tool_result] 1	from src.rate_limiter import RateLimiter
+========== [HIVE] GO! (t=1776658336) ==========
+[HIVE] Launching Claude Code (model=claude-haiku-4-5-20251001)...
+[system] model=claude-haiku-4-5-20251001 tools=350
+I'll execute the three-phase protocol.
+
+**PHASE 1 — RAG:**
+[tool] mcp__claude-flow__memory_search
+[tool] Read /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/reference/rate_limiter_gold.py
+[tool_result] MCP error -32000: Connection closed
+[tool_result] <4945 chars> 1	"""Reference rate limiter — seeded into hive's RAG memory.
 2	
-3	__all__ = ["RateLimiter"]
-4	
-Good. Now I'll create both files in parallel.
-[tool] Write /Users/angie.ariza/Desktop/AI-tinkerers-2/challenge/hive/src/rate_limiter.py
-[tool_result] File created successfully at: /Users/angie.ariza/Desktop/AI-tinkerers-2/challenge/hive/src/rate_limiter.py (file state is current in your context — no need to Read it back)
-[tool] Write /Users/angie.ariza/Desktop/AI-tinkerers-2/challenge/hive/src/test_rate_limiter.py
-[tool_result] File created successfully at: /Users/angie.ariza/Desktop/AI-tinkerers-2/challenge/hive/src/test_rate_limiter.py (file state is current in your context — no need to Read it back)
-Now let me run the tests.
-[tool] Bash python -m pytest src/test_rate_limiter.py -v --tb=short --cov=src --cov-report=j
-[tool_result] <2977 chars> ============================= test session starts ==============================
+3	Retrieved via `ruflo memory search` before the hive writes code. Encodes
+4	the taste we want t...
+[tool] Read /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/reference/edge_cases.md
+[tool_result] <3341 chars> 1	# Edge-case Playbook (hive RAG memory seed #2)
+2	
+3	The hive retrieves this document via `ruflo memory search` before writing
+4	tests. It enumerates the exact...
+[tool] Read /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/reference/consensus_rubric.md
+[tool_result] <2575 chars> 1	# Byzantine Consensus Rubric (hive RAG memory seed #3)
+2	
+3	Three reviewer personas vote on the final implementation. Consensus
+4	requires ≥ 2 of 3 APPROVE ve...
+**PHASE 2 — IMPLEMENT + SELF-VERIFY:**
+[tool] Write /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/challenge/hive/src/rate_limiter.py
+[tool_result] File created successfully at: /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/challenge/hive/src/rate_limiter.py (file state is current in your context — no need to Read it back)
+[tool] Write /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/challenge/hive/src/test_rate_limiter.py
+[tool_result] File created successfully at: /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/challenge/hive/src/test_rate_limiter.py (file state is current in your context — no need to Read it back)
+[tool] Bash pytest src/test_rate_limiter.py -v --tb=short --cov=src --cov-report=json
+[tool_result] <3037 chars> ============================= test session starts ==============================
 platform darwin -- Python 3.13.1, pytest-9.0.3, pluggy-1.6.0 -- /Users/angie.ar...
-All 19 tests pass with **100% line coverage**. Here's what was implemented:
+[tool] Bash python ../../scoreboard/metrics.py . metrics.json && cat metrics.json
+[tool_result] <1621 chars> {
+  "complexity": {
+    "max_cc": 6,
+    "avg_cc": 3.88,
+    "total_blocks": 8,
+    "top_blocks": [
+      {
+        "name": "snapshot",
+        "cc": 6,
+       ...
+[tool] Bash cat coverage.json | python -m json.tool | grep -A 50 "totals"
+[tool_result] <334 chars>     "totals": {
+        "covered_lines": 65,
+        "num_statements": 66,
+        "percent_covered": 98.48484848484848,
+        "percent_covered_display": "98"...
+**ISSUE: max_cc=6 exceeds limit of 5. Refactoring.**
+[tool] Edit /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/challenge/hive/src/rate_limiter.py
+[tool_result] The file /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/challenge/hive/src/rate_limiter.py has been updated successfully. (file state is current in your context — no need to Read it back)
+[tool] Bash pytest src/test_rate_limiter.py -v --tb=short --cov=src --cov-report=json && pyt
+[tool_result] <4350 chars> ============================= test session starts ==============================
+platform darwin -- Python 3.13.1, pytest-9.0.3, pluggy-1.6.0 -- /Users/angie.ar...
+**PHASE 3 — BYZANTINE REVIEW:**
 
-**`src/rate_limiter.py`** — A `RateLimiter` class with:
-- Sliding window via `time.monotonic()` timestamps — entries older than `window_seconds` are evicted on each call
-- Weighted cost accounting — each request consumes `cost` units against `max_requests`
-- Per-client isolation using separate entry lists and per-client locks
-- Thread-safety via a double-checked locking pattern for client lock creation plus per-client locks for request processing
-- Strict validation: `ValueError` for invalid `max_requests`, `window_seconds`, `cost ≤ 0`, and `cost > max_requests`
-- Exact boundary: requests at exactly `now - window_seconds` are treated as expired (`ts > cutoff`, not `>=`)
+V1 perf: APPROVE — deque.popleft() O(1) expiry, incremental counter, 1.24M ops/sec, p99=0.92us excellent.
+V2 correctness: APPROVE — 23/23 tests pass, 98% coverage, <= boundary enforced, bool rejection, all edge cases covered.
+V3 concurrency: APPROVE — global lock with tight critical section, Barrier contention test asserts exactly 100 grants, stale eviction within 2*window, monotonic() used.
 
-**`src/test_rate_limiter.py`** — 19 tests across 6 test classes:
-- **Constructor validation** (5 tests) — zero/negative params, valid construction
-- **Cost validation** (4 tests) — zero/negative/exceeding cost, cost equal to max
-- **Sliding window** (3 tests) — basic limit, expiration after window, exact boundary via mocked time
-- **Weighted cost** (3 tests) — budget accounting, combined cost denial, default cost
-- **Client isolation** (1 test) — independent per-client limits
-- **Thread safety** (3 tests) — concurrent unit-cost, concurrent weighted-cost, and multi-client contention using `threading.Barrier`
-[result] model=claude-opus-4-6 in=7 out=3906 cache_read=144405 cost=$0.2032 turns=6
+**APPROVED**
+[result] model=claude-haiku-4-5-20251001 in=66 out=7488 cache_read=719337 cost=$0.1281 turns=12
 
-========== [HIVE] FINISHED in 61s ==========
+========== [HIVE] POST-RACE: ruflo hive-mind consensus ==========
+
+Pending Proposals
+[INFO] No pending proposals
+
+========== [HIVE] FINISHED in 74s ==========

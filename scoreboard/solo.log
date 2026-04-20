@@ -1,50 +1,45 @@
 ========== [SOLO] PREP PHASE ==========
 [SOLO] DEMO_MODE=fast  (challenge: CHALLENGE_FAST.md)
-[SOLO] Working in: /Users/angie.ariza/Desktop/AI-tinkerers-2/challenge/solo
+[SOLO] Working in: /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/challenge/solo
 [SOLO] Model: claude-opus-4-6
 [SOLO] No prep required — agent is a single claude -p invocation.
 ========== [SOLO] READY — WAITING FOR STARTING GUN ==========
-========== [SOLO] GO! (t=1776400039) ==========
+========== [SOLO] GO! (t=1776658336) ==========
 [SOLO] Launching Claude Code (model=claude-opus-4-6)...
-[system] model=claude-opus-4-6 tools=88
-Let me check the current state of the directory first.
-[tool] Bash ls -la /Users/angie.ariza/Desktop/AI-tinkerers-2/challenge/solo/src/
-[tool_result] total 8
--rw-r--r--@ 1 angie.ariza  1921536389   65 Apr 17 00:27 __init__.py
-drwxr-xr-x@ 3 angie.ariza  1921536389   96 Apr 17 00:26 .
-drwxr-xr-x@ 4 angie.ariza  1921536389  128 Apr 17 00:26 ..
-[tool] Read /Users/angie.ariza/Desktop/AI-tinkerers-2/challenge/solo/src/__init__.py
+[system] model=claude-opus-4-6 tools=350
+Let me check what exists first.
+[tool] Bash ls -la /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/challenge/solo/src/
+[tool] Read /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/challenge/solo/src/__init__.py
 [tool_result] 1	from .rate_limiter import RateLimiter
 2	
 3	__all__ = ["RateLimiter"]
 4	
+[tool_result] <260 chars> total 8
+-rw-r--r--@ 1 angie.ariza  1921536389   65 Apr 20 00:12 __init__.py
+drwxr-xr-x@ 5 angie.ariza  1921536389  160 Apr 20 00:09 __pycache__
+drwxr-xr-x@ 4 an...
 Now I'll create both files in parallel.
-[tool] Write /Users/angie.ariza/Desktop/AI-tinkerers-2/challenge/solo/src/rate_limiter.py
-[tool_result] File created successfully at: /Users/angie.ariza/Desktop/AI-tinkerers-2/challenge/solo/src/rate_limiter.py (file state is current in your context — no need to Read it back)
-[tool] Write /Users/angie.ariza/Desktop/AI-tinkerers-2/challenge/solo/src/test_rate_limiter.py
-[tool_result] File created successfully at: /Users/angie.ariza/Desktop/AI-tinkerers-2/challenge/solo/src/test_rate_limiter.py (file state is current in your context — no need to Read it back)
-Now let's run the tests.
+[tool] Write /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/challenge/solo/src/rate_limiter.py
+[tool_result] File created successfully at: /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/challenge/solo/src/rate_limiter.py (file state is current in your context — no need to Read it back)
+[tool] Write /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/challenge/solo/src/test_rate_limiter.py
+[tool_result] File created successfully at: /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/challenge/solo/src/test_rate_limiter.py (file state is current in your context — no need to Read it back)
+Now let me run the tests.
 [tool] Bash python -m pytest src/test_rate_limiter.py -v --tb=short --cov=src --cov-report=j
-[tool_result] <3186 chars> ============================= test session starts ==============================
+[tool_result] <2944 chars> ============================= test session starts ==============================
 platform darwin -- Python 3.13.1, pytest-9.0.3, pluggy-1.6.0 -- /Users/angie.ar...
-All 22 tests pass with **100% line coverage**. Here's a summary:
+All **20 tests pass** with **100% line coverage** on both files.
 
-**`src/rate_limiter.py`** — Sliding window rate limiter using:
-- A `deque` of `(timestamp, cost)` per client for O(1) append/evict
-- A separate cost counter per client to avoid summing the deque on every call
-- A single `threading.Lock` protecting all state, ensuring atomic check-and-grant
-- Entries at exactly the window boundary (`<=` cutoff) are treated as expired
+**Implementation summary:**
 
-**`src/test_rate_limiter.py`** — 22 tests across 7 groups:
-| Group | Tests | Covers |
-|---|---|---|
-| ConstructorValidation | 4 | `max_requests <= 0`, `window_seconds <= 0` |
-| CostValidation | 3 | `cost <= 0`, `cost > max_requests` |
-| SlidingWindow | 4 | Basic allow/deny, expiry, exact-boundary expiry |
-| WeightedCost | 5 | Heavy request, combined over/under, exact-equal, free after window |
-| ClientIsolation | 2 | Independent clients, one blocked doesn't affect another |
-| ThreadSafety | 3 | Contended single-client, weighted concurrent, multi-client (all use `threading.Barrier`) |
-| DefaultCost | 1 | Default `cost=1` |
-[result] model=claude-opus-4-6 in=7 out=3549 cache_read=144339 cost=$0.1911 turns=6
+- **`src/rate_limiter.py`** — `RateLimiter` class using per-client locks (no global contention across clients) with a sliding window that evicts entries older than `window_seconds` on each call. Validates all inputs per spec.
 
-========== [SOLO] FINISHED in 56s ==========
+- **`src/test_rate_limiter.py`** — 20 tests across 6 test classes:
+  - `TestConstructorValidation` — `ValueError` for zero/negative `max_requests` and `window_seconds`
+  - `TestCostValidation` — `ValueError` for zero/negative cost and cost exceeding max
+  - `TestSlidingWindow` — basic limit enforcement, expiry after window, exact-boundary expiry
+  - `TestWeightedCost` — single heavy request, combined cost denial, mixed costs, default cost
+  - `TestClientIsolation` — independent clients, 100-client stress test
+  - `TestThreadSafety` — 3 concurrent tests using `threading.Barrier` asserting grants never exceed `max_requests`
+[result] model=claude-opus-4-6 in=69 out=3231 cache_read=131485 cost=$0.1754 turns=6
+
+========== [SOLO] FINISHED in 49s ==========

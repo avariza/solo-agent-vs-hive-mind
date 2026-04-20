@@ -154,17 +154,35 @@
 
     .progress-bar {
       width: 100%;
-      height: 4px;
+      height: 22px;
       background: var(--border);
-      border-radius: 2px;
-      margin-top: 0.75rem;
+      border-radius: 11px;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
       overflow: hidden;
+      position: relative;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25);
     }
 
     .progress-bar-fill {
       height: 100%;
-      border-radius: 2px;
+      border-radius: 11px;
       transition: width 0.5s ease;
+    }
+
+    .progress-bar-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      font-size: 0.8rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+      letter-spacing: 0.03em;
+      pointer-events: none;
     }
 
     .solo .progress-bar-fill { background: var(--solo-accent); }
@@ -185,6 +203,69 @@
     }
 
     .files-list .file-name { color: var(--text); }
+
+    /* Evaluation-in-progress indicator */
+    .eval-indicator {
+      display: none;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 0.75rem;
+      padding: 0.55rem 0.8rem;
+      border-radius: 8px;
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--hive-accent);
+      animation: evalPulse 1.8s ease-in-out infinite;
+    }
+
+    .eval-indicator.visible { display: flex; }
+
+    .eval-spinner {
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(245, 158, 11, 0.25);
+      border-top-color: var(--hive-accent);
+      border-radius: 50%;
+      animation: evalSpin 0.9s linear infinite;
+      flex-shrink: 0;
+    }
+
+    .eval-dots::after {
+      content: '';
+      animation: evalDots 1.4s steps(4, end) infinite;
+    }
+
+    .eval-sub {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.64rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+
+    @keyframes evalSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes evalPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.25); }
+      50%      { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+    }
+
+    @keyframes evalDots {
+      0%   { content: ''; }
+      25%  { content: '.'; }
+      50%  { content: '..'; }
+      75%  { content: '...'; }
+      100% { content: ''; }
+    }
 
     /* Detailed metrics table */
     .details-table {
@@ -219,6 +300,94 @@
 
     .details-table .val-yes { color: var(--green); }
     .details-table .val-no { color: var(--red); }
+
+    /* Card-grid variant — same visual language as .top-metrics */
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.55rem;
+      margin-top: 1rem;
+    }
+
+    .detail-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.55rem 0.7rem;
+      min-width: 0;
+    }
+
+    .detail-label {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--dim);
+      margin-bottom: 0.25rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .detail-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .detail-value.val-yes { color: var(--green); }
+    .detail-value.val-no  { color: var(--red); }
+
+    /* Rubric buckets — the 5 things the final /5 score is built from */
+    .rubric-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.4rem;
+      margin-top: 1.25rem;
+      padding-top: 0.9rem;
+      border-top: 1px dashed var(--border);
+    }
+
+    .rubric-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 0.45rem;
+      text-align: center;
+      min-width: 0;
+    }
+
+    .rubric-label {
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--dim);
+      margin-bottom: 0.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rubric-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .rubric-value .rubric-max {
+      color: var(--dim);
+      font-weight: 500;
+      font-size: 0.7rem;
+    }
+
+    .rubric-value.val-green { color: var(--green); }
+    .rubric-value.val-red   { color: var(--red); }
+
+    .solo .rubric-card { border-color: rgba(59, 130, 246, 0.25); }
+    .hive .rubric-card { border-color: rgba(245, 158, 11, 0.25); }
 
     .score-section {
       margin-top: 1rem;
@@ -534,42 +703,42 @@
         <span class="side-title">SOLO AGENT</span>
         <span class="status-badge status-waiting" id="solo-status">WAITING</span>
       </div>
-      <div class="top-metrics">
-        <div class="metric">
-          <div class="metric-label">Files</div>
-          <div class="metric-value" id="solo-files">0</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Lines</div>
-          <div class="metric-value" id="solo-lines">0</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Tests</div>
-          <div class="metric-value" id="solo-tests">-</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Coverage</div>
-          <div class="metric-value" id="solo-coverage">-</div>
-        </div>
+      <div class="progress-bar">
+        <div class="progress-bar-fill" id="solo-progress" style="width: 0%"></div>
+        <div class="progress-bar-label" id="solo-progress-label">Waiting · 0%</div>
       </div>
-      <div class="progress-bar"><div class="progress-bar-fill" id="solo-progress" style="width: 0%"></div></div>
       <div class="files-list" id="solo-files-list"></div>
-      <table class="details-table" id="solo-details">
-        <tr><td>Time</td><td id="solo-time">--</td></tr>
-        <tr><td>Model</td><td id="solo-model">--</td></tr>
-        <tr><td>Tokens</td><td id="solo-tokens">--</td></tr>
-        <tr><td>Cost</td><td id="solo-cost">--</td></tr>
-        <tr><td>Implementation</td><td id="solo-impl">--</td></tr>
-        <tr><td>Tests Written</td><td id="solo-has-tests">--</td></tr>
-        <tr><td>Tests Passing</td><td id="solo-passing">--</td></tr>
-        <tr><td>Coverage</td><td id="solo-cov-detail">--</td></tr>
-        <tr><td>Edge Cases</td><td id="solo-edge">--</td></tr>
-        <tr><td>Code Lines</td><td id="solo-code-lines">--</td></tr>
-        <tr><td>Test Lines</td><td id="solo-test-lines">--</td></tr>
-        <tr><td>Max Complexity</td><td id="solo-complexity">--</td></tr>
-        <tr><td>Throughput</td><td id="solo-throughput">--</td></tr>
-        <tr><td>Conciseness</td><td id="solo-conciseness">--</td></tr>
-      </table>
+      <div class="eval-indicator" id="solo-eval">
+        <span class="eval-spinner"></span>
+        <span>
+          <span class="eval-label" id="solo-eval-label">Scoring in progress</span><span class="eval-dots"></span>
+          <span class="eval-sub" id="solo-eval-sub"></span>
+        </span>
+      </div>
+      <div class="details-grid" id="solo-runtime">
+        <div class="detail-card"><div class="detail-label">Time</div><div class="detail-value" id="solo-time">--</div></div>
+        <div class="detail-card"><div class="detail-label">Model</div><div class="detail-value" id="solo-model">--</div></div>
+        <div class="detail-card"><div class="detail-label">Tokens</div><div class="detail-value" id="solo-tokens">--</div></div>
+        <div class="detail-card"><div class="detail-label">Cost</div><div class="detail-value" id="solo-cost">--</div></div>
+      </div>
+      <div class="details-grid" id="solo-details">
+        <div class="detail-card"><div class="detail-label">Impl File</div><div class="detail-value" id="solo-impl">--</div></div>
+        <div class="detail-card"><div class="detail-label">Test File</div><div class="detail-value" id="solo-has-tests">--</div></div>
+        <div class="detail-card"><div class="detail-label">Tests Passing</div><div class="detail-value" id="solo-passing">--</div></div>
+        <div class="detail-card"><div class="detail-label">Edge Cases</div><div class="detail-value" id="solo-edge">--</div></div>
+        <div class="detail-card"><div class="detail-label">Coverage</div><div class="detail-value" id="solo-cov-detail">--</div></div>
+        <div class="detail-card"><div class="detail-label">Max Complexity</div><div class="detail-value" id="solo-complexity">--</div></div>
+        <div class="detail-card"><div class="detail-label">Throughput</div><div class="detail-value" id="solo-throughput">--</div></div>
+        <div class="detail-card"><div class="detail-label">Code Lines</div><div class="detail-value" id="solo-code-lines">--</div></div>
+        <div class="detail-card"><div class="detail-label">Test Lines</div><div class="detail-value" id="solo-test-lines">--</div></div>
+      </div>
+      <div class="rubric-grid" id="solo-rubric" title="The 5 buckets that build the final /5 score">
+        <div class="rubric-card"><div class="rubric-label">Correctness</div><div class="rubric-value" id="solo-rubric-correctness">--<span class="rubric-max">/2</span></div></div>
+        <div class="rubric-card"><div class="rubric-label">Deliverable</div><div class="rubric-value" id="solo-rubric-deliverable">--<span class="rubric-max">/0.5</span></div></div>
+        <div class="rubric-card"><div class="rubric-label">Maintain.</div><div class="rubric-value" id="solo-rubric-maintainability">--<span class="rubric-max">/1</span></div></div>
+        <div class="rubric-card"><div class="rubric-label">Performance</div><div class="rubric-value" id="solo-rubric-performance">--<span class="rubric-max">/1</span></div></div>
+        <div class="rubric-card"><div class="rubric-label">Conciseness</div><div class="rubric-value" id="solo-rubric-conciseness">--<span class="rubric-max">/0.5</span></div></div>
+      </div>
       <div class="score-section">
         <div class="score-label">Score</div>
         <div class="score-value" id="solo-score">--</div>
@@ -583,42 +752,42 @@
         <span class="side-title">HIVE MIND</span>
         <span class="status-badge status-waiting" id="hive-status">WAITING</span>
       </div>
-      <div class="top-metrics">
-        <div class="metric">
-          <div class="metric-label">Files</div>
-          <div class="metric-value" id="hive-files">0</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Lines</div>
-          <div class="metric-value" id="hive-lines">0</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Tests</div>
-          <div class="metric-value" id="hive-tests">-</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Coverage</div>
-          <div class="metric-value" id="hive-coverage">-</div>
-        </div>
+      <div class="progress-bar">
+        <div class="progress-bar-fill" id="hive-progress" style="width: 0%"></div>
+        <div class="progress-bar-label" id="hive-progress-label">Waiting · 0%</div>
       </div>
-      <div class="progress-bar"><div class="progress-bar-fill" id="hive-progress" style="width: 0%"></div></div>
       <div class="files-list" id="hive-files-list"></div>
-      <table class="details-table" id="hive-details">
-        <tr><td>Time</td><td id="hive-time">--</td></tr>
-        <tr><td>Model</td><td id="hive-model">--</td></tr>
-        <tr><td>Tokens</td><td id="hive-tokens">--</td></tr>
-        <tr><td>Cost</td><td id="hive-cost">--</td></tr>
-        <tr><td>Implementation</td><td id="hive-impl">--</td></tr>
-        <tr><td>Tests Written</td><td id="hive-has-tests">--</td></tr>
-        <tr><td>Tests Passing</td><td id="hive-passing">--</td></tr>
-        <tr><td>Coverage</td><td id="hive-cov-detail">--</td></tr>
-        <tr><td>Edge Cases</td><td id="hive-edge">--</td></tr>
-        <tr><td>Code Lines</td><td id="hive-code-lines">--</td></tr>
-        <tr><td>Test Lines</td><td id="hive-test-lines">--</td></tr>
-        <tr><td>Max Complexity</td><td id="hive-complexity">--</td></tr>
-        <tr><td>Throughput</td><td id="hive-throughput">--</td></tr>
-        <tr><td>Conciseness</td><td id="hive-conciseness">--</td></tr>
-      </table>
+      <div class="eval-indicator" id="hive-eval">
+        <span class="eval-spinner"></span>
+        <span>
+          <span class="eval-label" id="hive-eval-label">Scoring in progress</span><span class="eval-dots"></span>
+          <span class="eval-sub" id="hive-eval-sub"></span>
+        </span>
+      </div>
+      <div class="details-grid" id="hive-runtime">
+        <div class="detail-card"><div class="detail-label">Time</div><div class="detail-value" id="hive-time">--</div></div>
+        <div class="detail-card"><div class="detail-label">Model</div><div class="detail-value" id="hive-model">--</div></div>
+        <div class="detail-card"><div class="detail-label">Tokens</div><div class="detail-value" id="hive-tokens">--</div></div>
+        <div class="detail-card"><div class="detail-label">Cost</div><div class="detail-value" id="hive-cost">--</div></div>
+      </div>
+      <div class="details-grid" id="hive-details">
+        <div class="detail-card"><div class="detail-label">Impl File</div><div class="detail-value" id="hive-impl">--</div></div>
+        <div class="detail-card"><div class="detail-label">Test File</div><div class="detail-value" id="hive-has-tests">--</div></div>
+        <div class="detail-card"><div class="detail-label">Tests Passing</div><div class="detail-value" id="hive-passing">--</div></div>
+        <div class="detail-card"><div class="detail-label">Edge Cases</div><div class="detail-value" id="hive-edge">--</div></div>
+        <div class="detail-card"><div class="detail-label">Coverage</div><div class="detail-value" id="hive-cov-detail">--</div></div>
+        <div class="detail-card"><div class="detail-label">Max Complexity</div><div class="detail-value" id="hive-complexity">--</div></div>
+        <div class="detail-card"><div class="detail-label">Throughput</div><div class="detail-value" id="hive-throughput">--</div></div>
+        <div class="detail-card"><div class="detail-label">Code Lines</div><div class="detail-value" id="hive-code-lines">--</div></div>
+        <div class="detail-card"><div class="detail-label">Test Lines</div><div class="detail-value" id="hive-test-lines">--</div></div>
+      </div>
+      <div class="rubric-grid" id="hive-rubric" title="The 5 buckets that build the final /5 score">
+        <div class="rubric-card"><div class="rubric-label">Correctness</div><div class="rubric-value" id="hive-rubric-correctness">--<span class="rubric-max">/2</span></div></div>
+        <div class="rubric-card"><div class="rubric-label">Deliverable</div><div class="rubric-value" id="hive-rubric-deliverable">--<span class="rubric-max">/0.5</span></div></div>
+        <div class="rubric-card"><div class="rubric-label">Maintain.</div><div class="rubric-value" id="hive-rubric-maintainability">--<span class="rubric-max">/1</span></div></div>
+        <div class="rubric-card"><div class="rubric-label">Performance</div><div class="rubric-value" id="hive-rubric-performance">--<span class="rubric-max">/1</span></div></div>
+        <div class="rubric-card"><div class="rubric-label">Conciseness</div><div class="rubric-value" id="hive-rubric-conciseness">--<span class="rubric-max">/0.5</span></div></div>
+      </div>
       <div class="score-section">
         <div class="score-label">Score</div>
         <div class="score-value" id="hive-score">--</div>
@@ -657,9 +826,6 @@
       statusEl.textContent = d.status.toUpperCase();
       statusEl.className = 'status-badge status-' + d.status;
 
-      document.getElementById(side + '-files').textContent = d.files ? d.files.length : 0;
-      document.getElementById(side + '-lines').textContent = d.lines || 0;
-
       const filesList = document.getElementById(side + '-files-list');
       if (d.files && d.files.length > 0) {
         filesList.innerHTML = d.files.map(function(f) {
@@ -670,39 +836,107 @@
       }
 
       var progress = 0;
-      if (d.status === 'running' || d.status === 'coding') progress = 33;
-      if (d.status === 'testing') progress = 66;
-      if (d.status === 'done') progress = 100;
+      var progressLabel = 'Waiting';
+      if (d.status === 'running' || d.status === 'coding') { progress = 33;  progressLabel = 'Coding'; }
+      if (d.status === 'testing')                           { progress = 66;  progressLabel = 'Testing'; }
+      if (d.status === 'done')                              { progress = 100; progressLabel = 'Done'; }
       document.getElementById(side + '-progress').style.width = progress + '%';
+      document.getElementById(side + '-progress-label').textContent =
+        progressLabel + ' · ' + progress + '%';
+
+      const evalEl = document.getElementById(side + '-eval');
+      const evalLabelEl = document.getElementById(side + '-eval-label');
+      const evalSubEl = document.getElementById(side + '-eval-sub');
+      if (evalEl) {
+        const hasResults = !!(data.results && data.results[side]);
+        const bothFilesExist = d.files && d.files.length >= 2;
+        const inTestPhase   = d.status === 'testing' && bothFilesExist;
+        const inScorePhase  = d.status === 'done' && !hasResults;
+        const evaluating = inTestPhase || inScorePhase;
+        evalEl.classList.toggle('visible', !!evaluating);
+
+        if (evaluating && evalLabelEl && evalSubEl) {
+          if (inTestPhase) {
+            evalLabelEl.textContent = 'Running tests';
+            evalSubEl.textContent = 'pytest · coverage · json report';
+          } else {
+            evalLabelEl.textContent = 'Computing score';
+            evalSubEl.textContent = 'throughput · complexity · probes · rubric';
+          }
+        }
+      }
 
       if (data.results && data.results[side]) {
         const r = data.results[side];
 
-        const testsEl = document.getElementById(side + '-tests');
-        testsEl.textContent = r.tests_passed + '/' + r.tests_total;
-        testsEl.className = 'metric-value' + (r.tests_passed === r.tests_total && r.tests_total > 0 ? ' highlight-green' : r.tests_failed > 0 ? ' highlight-red' : '');
-
-        const covEl = document.getElementById(side + '-coverage');
-        covEl.textContent = r.coverage_percent + '%';
-        covEl.className = 'metric-value' + (r.coverage_percent >= 80 ? ' highlight-green' : '');
-
-        document.getElementById(side + '-score').textContent = r.score + '/100';
+        document.getElementById(side + '-score').textContent = r.score + '/5';
 
         document.getElementById(side + '-time').textContent = (r.duration_seconds || d.duration || '--') + 's';
-        document.getElementById(side + '-impl').innerHTML = yesNo(r.has_implementation);
-        document.getElementById(side + '-has-tests').innerHTML = yesNo(r.has_tests);
-        document.getElementById(side + '-passing').textContent = r.tests_passed + '/' + r.tests_total;
         document.getElementById(side + '-cov-detail').textContent = r.coverage_percent + '%';
         document.getElementById(side + '-edge').textContent = r.edge_cases.count + '/' + r.edge_cases.total;
-        document.getElementById(side + '-code-lines').textContent = r.lines_impl;
-        document.getElementById(side + '-test-lines').textContent = r.lines_test;
 
-        const concEl = document.getElementById(side + '-conciseness');
-        if (concEl && r.conciseness) {
-          concEl.textContent = r.conciseness.points.toFixed(1) + '/10';
-          concEl.className =
-            r.conciseness.points >= 7 ? 'val-yes' :
-            r.conciseness.points <= 3 ? 'val-no' : '';
+        const implEl = document.getElementById(side + '-impl');
+        if (implEl) {
+          implEl.innerHTML = yesNo(r.has_implementation);
+          implEl.className = 'detail-value';
+        }
+        const hasTestsEl = document.getElementById(side + '-has-tests');
+        if (hasTestsEl) {
+          hasTestsEl.innerHTML = yesNo(r.has_tests);
+          hasTestsEl.className = 'detail-value';
+        }
+        const passingEl = document.getElementById(side + '-passing');
+        if (passingEl) {
+          if (r.tests_total > 0) {
+            const rate = r.tests_passed / r.tests_total;
+            passingEl.textContent = r.tests_passed + '/' + r.tests_total;
+            passingEl.className = 'detail-value' + (
+              rate >= 0.99 ? ' val-yes' :
+              rate <= 0.5  ? ' val-no'  : ''
+            );
+          } else {
+            passingEl.textContent = '--';
+            passingEl.className = 'detail-value';
+          }
+        }
+        const codeLinesEl = document.getElementById(side + '-code-lines');
+        if (codeLinesEl) {
+          codeLinesEl.textContent = r.lines_impl > 0 ? r.lines_impl : '--';
+          codeLinesEl.className = 'detail-value' + (
+            r.lines_impl > 0 && r.lines_impl <= 100 ? ' val-yes' :
+            r.lines_impl > 200 ? ' val-no' : ''
+          );
+        }
+        const testLinesEl = document.getElementById(side + '-test-lines');
+        if (testLinesEl) {
+          testLinesEl.textContent = r.lines_test > 0 ? r.lines_test : '--';
+          testLinesEl.className = 'detail-value' + (
+            r.lines_test > 0 && r.lines_test <= 200 ? ' val-yes' :
+            r.lines_test > 400 ? ' val-no' : ''
+          );
+        }
+
+        // --- Rubric buckets (the 5 components of the final /5 score) ---
+        if (r.rubric) {
+          const setRubric = (key, elId) => {
+            const el = document.getElementById(elId);
+            if (!el) return;
+            const bucket = r.rubric[key];
+            if (!bucket) { el.innerHTML = '--<span class="rubric-max">/' + 0 + '</span>'; return; }
+            const pts = Number(bucket.points) || 0;
+            const max = Number(bucket.max) || 0;
+            const ratio = max > 0 ? pts / max : 0;
+            const cls = ratio >= 0.8 ? ' val-green'
+                      : ratio <= 0.3 ? ' val-red'
+                      : '';
+            el.className = 'rubric-value' + cls;
+            el.innerHTML = pts.toFixed(2) + '<span class="rubric-max">/' + max + '</span>';
+          };
+          setRubric('correctness',     side + '-rubric-correctness');
+          setRubric('deliverable',     side + '-rubric-deliverable');
+          setRubric('maintainability', side + '-rubric-maintainability');
+          setRubric('performance',     side + '-rubric-performance');
+          setRubric('conciseness',     side + '-rubric-conciseness');
         }
 
         // --- Model / Tokens / Cost (from stream-json parser) ---
@@ -727,9 +961,10 @@
         const cxEl = document.getElementById(side + '-complexity');
         if (cxEl && cx && cx.max_cc !== null && cx.max_cc !== undefined) {
           cxEl.textContent = cx.max_cc + ' (' + cx.points + '/' + cx.max_points + ' pts)';
-          cxEl.className =
-            cx.max_cc <= 5 ? 'val-yes' :
-            cx.max_cc > 15 ? 'val-no' : '';
+          cxEl.className = 'detail-value' + (
+            cx.max_cc <= 5 ? ' val-yes' :
+            cx.max_cc > 15 ? ' val-no' : ''
+          );
         } else if (cxEl) {
           cxEl.textContent = '--';
         }
@@ -743,9 +978,10 @@
                       : ops >= 1e3 ? (ops / 1e3).toFixed(1) + 'k/s'
                       : ops.toFixed(0) + '/s';
           tpEl.textContent = opsStr + ' (' + tp.points.toFixed(1) + '/' + tp.max_points + ' pts)';
-          tpEl.className =
-            tp.points >= 4 ? 'val-yes' :
-            tp.points <= 1 ? 'val-no' : '';
+          tpEl.className = 'detail-value' + (
+            tp.points >= 4 ? ' val-yes' :
+            tp.points <= 1 ? ' val-no' : ''
+          );
         } else if (tpEl) {
           tpEl.textContent = '--';
         }

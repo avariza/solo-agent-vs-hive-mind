@@ -1,0 +1,40 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.1, pytest-9.0.3, pluggy-1.6.0 -- /Users/angie.ariza/Desktop/AI-tinkerers-2/.venv/bin/python
+cachedir: .pytest_cache
+metadata: {'Python': '3.13.1', 'Platform': 'macOS-26.3-arm64-arm-64bit-Mach-O', 'Packages': {'pytest': '9.0.3', 'pluggy': '1.6.0'}, 'Plugins': {'cov': '7.1.0', 'json-report': '1.5.0', 'metadata': '3.1.1'}}
+rootdir: /Users/angie.ariza/Desktop/solo-agent-vs-hive-mind/challenge/hive
+configfile: pyproject.toml
+plugins: cov-7.1.0, json-report-1.5.0, metadata-3.1.1
+collecting ... collected 25 items
+
+src/test_rate_limiter.py::TestConstructor::test_valid_construction PASSED [  4%]
+src/test_rate_limiter.py::TestConstructor::test_max_requests_zero PASSED [  8%]
+src/test_rate_limiter.py::TestConstructor::test_max_requests_negative PASSED [ 12%]
+src/test_rate_limiter.py::TestConstructor::test_max_requests_boolean PASSED [ 16%]
+src/test_rate_limiter.py::TestConstructor::test_window_zero PASSED       [ 20%]
+src/test_rate_limiter.py::TestConstructor::test_window_negative PASSED   [ 24%]
+src/test_rate_limiter.py::TestCostValidation::test_cost_zero PASSED      [ 28%]
+src/test_rate_limiter.py::TestCostValidation::test_cost_negative PASSED  [ 32%]
+src/test_rate_limiter.py::TestCostValidation::test_cost_exceeds_max PASSED [ 36%]
+src/test_rate_limiter.py::TestCostValidation::test_cost_boolean PASSED   [ 40%]
+src/test_rate_limiter.py::TestWeightedCost::test_weighted_exact_capacity PASSED [ 44%]
+src/test_rate_limiter.py::TestWeightedCost::test_weighted_exceeds_capacity PASSED [ 48%]
+src/test_rate_limiter.py::TestWeightedCost::test_snapshot_after_weighted PASSED [ 52%]
+src/test_rate_limiter.py::TestSlidingWindow::test_expiry_at_window_boundary PASSED [ 56%]
+src/test_rate_limiter.py::TestSlidingWindow::test_expiry_before_window_boundary PASSED [ 60%]
+src/test_rate_limiter.py::TestSlidingWindow::test_continuous_window_no_bucket_alignment PASSED [ 64%]
+src/test_rate_limiter.py::TestPerClientIsolation::test_client_isolation PASSED [ 68%]
+src/test_rate_limiter.py::TestPerClientIsolation::test_snapshot_unknown_client PASSED [ 72%]
+src/test_rate_limiter.py::TestTimeUntilAllowed::test_time_until_allowed_available_now PASSED [ 76%]
+src/test_rate_limiter.py::TestTimeUntilAllowed::test_time_until_allowed_after_exhaustion PASSED [ 80%]
+src/test_rate_limiter.py::TestTimeUntilAllowed::test_time_until_allowed_weighted_case PASSED [ 84%]
+src/test_rate_limiter.py::TestTimeUntilAllowed::test_time_until_allowed_unknown_client PASSED [ 88%]
+src/test_rate_limiter.py::TestThreadSafety::test_concurrent_requests_bounded PASSED [ 92%]
+src/test_rate_limiter.py::TestThreadSafety::test_concurrent_multiple_clients PASSED [ 96%]
+src/test_rate_limiter.py::TestBoundedMemory::test_stale_client_eviction PASSED [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform darwin, python 3.13.1-final-0 _______________
+
+Coverage JSON written to file coverage.json
+============================== 25 passed in 0.61s ==============================

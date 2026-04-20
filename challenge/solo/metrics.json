@@ -1,37 +1,42 @@
 {
   "complexity": {
-    "max_cc": 8,
-    "avg_cc": 6.33,
-    "total_blocks": 3,
+    "max_cc": 7,
+    "avg_cc": 4,
+    "total_blocks": 4,
     "top_blocks": [
       {
         "name": "allow_request",
-        "cc": 8,
-        "line": 21
+        "cc": 7,
+        "line": 23
       },
       {
         "name": "RateLimiter",
-        "cc": 7,
+        "cc": 5,
         "line": 6
       },
       {
         "name": "__init__",
-        "cc": 4,
-        "line": 9
+        "cc": 3,
+        "line": 7
+      },
+      {
+        "name": "_get_lock",
+        "cc": 1,
+        "line": 19
       }
     ],
-    "loc": 49,
-    "lloc": 38,
+    "loc": 45,
+    "lloc": 35,
     "sloc": 35,
     "comments": 1
   },
   "throughput": {
-    "ops_per_sec": 1483189.6,
+    "ops_per_sec": 65099.5,
     "total_ops": 32000,
     "threads": 8,
-    "elapsed_sec": 0.022,
-    "p50_latency_us": 0.42,
-    "p99_latency_us": 0.62,
+    "elapsed_sec": 0.492,
+    "p50_latency_us": 14.33,
+    "p99_latency_us": 4420.42,
     "errors_sample": []
   },
   "error": null

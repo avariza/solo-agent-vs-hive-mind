@@ -1,6 +1,23 @@
 #!/bin/bash
+# Clean all race artifacts between runs.
+#
+# Two flavours:
+#   bash scripts/clean.sh            — normal clean (preserves ruflo memory,
+#                                      so the hive retains cross-run learning
+#                                      if you WANT the compounding narrative)
+#   bash scripts/clean.sh --deep     — nukes ruflo memory AND workers state.
+#                                      Use before a cold-start demo where
+#                                      you need reproducible timings.
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+
+DEEP=0
+for arg in "$@"; do
+  case "$arg" in
+    --deep|-d) DEEP=1 ;;
+  esac
+done
 
 echo "Cleaning challenge workspaces..."
 
@@ -29,12 +46,6 @@ rm -rf "$ROOT_DIR/challenge/hive/src/rate_limiter.py" \
 # Legacy artifact (we no longer produce the handoff file).
 rm -f "$ROOT_DIR/challenge/hive/ARCHITECT_HANDOFF.md"
 
-# Learning memory (prevents cross-run contamination)
-rm -rf "$ROOT_DIR/.claude-flow/data" \
-       "$ROOT_DIR/.claude-flow/learning" \
-       "$ROOT_DIR/.claude-flow/sessions" \
-       "$ROOT_DIR/.claude-flow/metrics/learning.json"
-
 # Scoreboard
 rm -f "$ROOT_DIR/scoreboard/solo.log" \
       "$ROOT_DIR/scoreboard/hive.log" \
@@ -53,4 +64,14 @@ rm -f "$ROOT_DIR/scoreboard/solo.log" \
 touch "$ROOT_DIR/challenge/solo/src/__init__.py"
 touch "$ROOT_DIR/challenge/hive/src/__init__.py"
 
-echo "Done. Ready to race."
+if [ "$DEEP" -eq 1 ]; then
+  echo "--deep: nuking ruflo memory + learning state..."
+  rm -rf "$ROOT_DIR/.claude-flow/data" \
+         "$ROOT_DIR/.claude-flow/learning" \
+         "$ROOT_DIR/.claude-flow/sessions" \
+         "$ROOT_DIR/.claude-flow/metrics/learning.json"
+  # Also clear the seeded RAG namespace so prep re-seeds from disk
+  npx ruflo@latest memory delete --namespace "hive-gold" 2>&1 | tail -1 || true
+fi
+
+echo "Done. Ready to race$( [ "$DEEP" -eq 1 ] && echo " (deep-cleaned)")."
